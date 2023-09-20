@@ -1,0 +1,324 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{CSE 4701 — Homework 1}
+\author{Mike Medved}
+\date{September 14th, 2023}
+
+\usepackage{graphicx}
+\usepackage{amsthm}
+\usepackage{amssymb} 
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{multirow, tabularx}
+\usepackage[margin=1in]{geometry} 
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{enumitem}
+\newlist{parlist}{enumerate}{1}
+\setlist[parlist]{label=(\alph*),wide=0pt,topsep=0pt}
+
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\NewExpandableDocumentCommand\mcc{O{1}m}{\multicolumn{#1}{c}{#2}}
+
+\lstdefinestyle{Java}{
+    language     = Java,
+    aboveskip    = 3mm,
+    belowskip    = 3mm,
+    basicstyle   = \footnotesize\ttfamily,
+    keywordstyle = \color{blue},
+    stringstyle  = \color{green},
+    commentstyle = \color{red}\small\ttfamily
+}
+
+\def\ojoin{\setbox0=\hbox{$\bowtie$}%
+  \rule[-.02ex]{.25em}{.4pt}\llap{\rule[\ht0]{.25em}{.4pt}}}
+\def\leftouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie}}
+\def\rightouterjoin{\mathbin{\bowtie\mkern-5.8mu\ojoin}}
+\def\fullouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie\mkern-5.8mu\ojoin}}
+
+\begin{document}
+
+\maketitle
+
+\section*{8.16 Company Database}
+
+\begin{parlist}
+    \item Retrieve the names of all employees in department 5 who work more than 10 hours per week on the ProductX project.
+    \begin{align*}
+        \text{rel}_1 &\leftarrow \sigma_{\text{Pname} = \text{`ProductX'}}(\text{PROJECT}) \\
+        \text{rel}_2 &\leftarrow \text{rel}_1 \bowtie \text{WORKS\_ON} \\
+        \text{rel}_3 &\leftarrow \text{EMPLOYEE} *_{\text{SSN}=\text{Essn}}(\sigma_{\text{Hours} > 10}(\text{rel}_2)) \\
+        \text{result} &\leftarrow \pi_{\text{Fname,Lname}}(\sigma_{\text{Dno}=5}(\text{rel}_3))
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 1: Operation result for 8.16(a)}
+        \begin{tabularx}{0.5\textwidth}{|C|C|}
+            \hline \textbf{Fname} & \textbf{Lname} \\ \hline
+            John & Smith \\ \hline
+            Joyce & English \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \item List the names of all employees who have a dependent with the same first name as themselves.
+    \begin{align*}
+        \text{rel} &\leftarrow \text{EMPLOYEE} \bowtie_{\text{SSN=Essn AND Fname=DEPENDENT\_NAME}}(\text{DEPENDENT}) \\
+        \text{result} &\leftarrow \pi_{\text{Fname,Lname}}(\text{rel})
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 2: Operation result for 8.16(b)}
+        \begin{tabularx}{0.5\textwidth}{|C|C|}
+            \hline \textbf{Fname} & \textbf{Lname} \\ \hline
+             &  \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \item Find the names of all employees who are directly supervised by `Franklin Wong'.
+    \begin{align*}
+        \text{rel}_1 &\leftarrow \sigma_{\text{Fname = Franklin AND Lname = Wong}}(\text{EMPLOYEE}) \\
+        \text{rel}_2 &\leftarrow \text{EMPLOYEE} \bowtie_{\text{Super\_ssn=SSN}}(\text{rel}_1) \\
+        \text{result} &\leftarrow \pi_{\text{Fname,Lname}}(\text{rel}_2)
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 3: Operation result for 8.16(c)}
+        \begin{tabularx}{0.5\textwidth}{|C|C|}
+            \hline \textbf{Fname} & \textbf{Lname} \\ \hline
+            John & Smith \\ \hline
+            Joyce & English \\ \hline
+            Ramesh & Narayan \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \item For each project, list the project name and the total hours per week (by all employees) spent on that project.
+    \begin{align*}
+        \text{rel}_1\left(\text{Pno}, \text{Total\_hours}\right) &\leftarrow \left[\text{Pno}, \sum \text{WORKS\_ON}\right] \\
+        \text{rel}_2 &\leftarrow \text{rel}_1 \bowtie_{\text{Pno=Pnumber}}(\text{PROJECT}) \\
+        \text{result} &\leftarrow \pi_{\text{Pname,Total\_hours}}(\text{rel}_2)
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 4: Operation result for 8.16(d)}
+        \begin{tabularx}{0.5\textwidth}{|C|C|}
+            \hline \textbf{Pname} & \textbf{Total\_hours} \\ \hline
+            ProductX & 52.5 \\ \hline
+            ProductY & 37.5 \\ \hline
+            ProductZ & 50.0 \\ \hline
+            Computerization & 55.0 \\ \hline
+            Reorganization & 25.0 \\ \hline
+            NewBenefits & 55.0 \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \item Retrieve the names of all employees who work on every project.
+    \begin{align*}
+        \text{rel}_1(\text{Pno, Ssn}) &\leftarrow \pi_{\text{Pno, Essn}}(\text{WORKS\_ON}) \\
+        \text{rel}_2 &\leftarrow \pi_{\text{Pnumber}}(\text{PROJECT}) \\
+        \text{rel}_3 &\leftarrow \pi_{\text{Fname, Lname}}(\text{rel}_1 \div \text{rel}_2) \\
+        \text{result} &\leftarrow \pi_{\text{Fname, Lname}}(\text{EMPLOYEE} * \text{rel}_3)
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 5: Operation result for 8.16(e)}
+        \begin{tabularx}{0.5\textwidth}{|C|C|}
+            \hline \textbf{Fname} & \textbf{Lname} \\ \hline
+             &  \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \item Retrieve the names of all employees who do not work on any project.
+    \begin{align*}
+        \text{rel}_1(\text{Pno, Ssn}) &\leftarrow \pi_{\text{Pno, Essn}}(\text{WORKS\_ON}) \\
+        \text{rel}_2 &\leftarrow \pi_{\text{Pnumber}}(\text{PROJECT}) \\
+        \text{rel}_3 &\leftarrow \pi_{\text{Fname, Lname}}(\text{rel}_1 - \text{rel}_2) \\
+        \text{result} &\leftarrow \pi_{\text{Fname, Lname}}(\text{EMPLOYEE} * \text{rel}_3)
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 6: Operation result for 8.16(f)}
+        \begin{tabularx}{0.5\textwidth}{|C|C|}
+            \hline \textbf{Fname} & \textbf{Lname} \\ \hline
+             &  \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \newpage
+    \item For each department, retrieve the department name and the average salary of all employees working in that department.
+    \begin{align*}
+        \text{rel}_1(\text{Dnumber, Avg\_salary}) &\leftarrow \left[\text{Dnumber}, \text{Avg}(\text{SALARY})\right] \\
+        \text{result} &\leftarrow \pi_{\text{Dname, Avg\_salary}}(\text{rel}_1 * \text{DEPARTMENT})
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 7: Operation result for 8.16(g)}
+        \begin{tabularx}{0.5\textwidth}{|C|C|}
+            \hline \textbf{Dname} & \textbf{Avg\_salary} \\ \hline
+            Research & 33250 \\ \hline
+            Administration & 31000 \\ \hline
+            Headquarters & 55000 \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \item Retrieve the average salary of all female employees.
+    \begin{align*}
+        \text{result}(\text{Avg\_salary}) &\leftarrow \text{Avg}(\sigma_{\text{Sex = F}}(\text{EMPLOYEE})) \\
+    \end{align*}
+
+    \begin{table}[h!]
+        \centering
+        \caption*{Table 8: Operation result for 8.16(h)}
+        \begin{tabularx}{0.5\textwidth}{|C|}
+            \hline \textbf{Avg\_salary} \\ \hline
+            31000 \\ \hline
+        \end{tabularx}
+    \end{table}
+\end{parlist}
+
+\newpage
+\section*{8.18 Library Database}
+
+\begin{parlist}
+    \item How many copies of the book titled \textit{The Lost Tribe} are owned by the library branch whose name is `Sharpstown'?
+    \begin{align*}
+        \text{rel}_1 &\leftarrow \sigma_{\text{Branch\_name = Sharpstown}}(\text{LIBRARY\_BRANCH}) \\
+        \text{rel}_2 &\leftarrow \sigma_{\text{Title = The Lost Tribe}}(\text{BOOK}) \\
+        \text{result} &\leftarrow \pi_{\text{No\_of\_copies}}((A \times B) * (\text{BOOK\_COPIES})) 
+    \end{align*}
+    
+    \item How many copies of the book titled \textit{The Lost Tribe} are owned by each library branch?
+    \begin{align*}
+        \text{rel}_1 &\leftarrow \sigma_{\text{Title = The Lost Tribe}}(\text{BOOK}) \\
+        \text{rel}_2 &\leftarrow ((\text{rel}_1 \times \text{LIBRARY\_BRANCH}) * \text{BOOK\_COPIES}) \\
+        \text{result} &\leftarrow \pi_{\text{Title, Branch\_name, No\_of\_copies}}(\text{rel}_2)
+    \end{align*}
+    
+    \item Retrieve the names of all borrowers who do not have any books checked out.
+    \begin{align*}
+        \text{rel}_1 &\leftarrow \text{BORROWER} - (\text{BORROWER} * \text{BOOK\_LOANS}) \\
+        \text{result} &\leftarrow \pi_{\text{Name}}(\text{rel}_1)
+    \end{align*}
+    
+    \item For each book that is loaned out from the Sharpstown branch and whose Due\_date is today, retrieve the book title, the borrower's name, and the borrower's address.
+    \begin{align*}
+        \text{rel}_1 &\leftarrow \sigma_{\text{Branch\_name = Sharpstown}}(\text{LIBRARY\_BRANCH}) \\
+        \text{rel}_2 &\leftarrow \sigma_{\text{Due\_date = TODAY()}}(\text{BOOK\_LOANS}) \\
+        \text{rel}_3 &\leftarrow (\text{rel}_1 \times BOOK) * \text{rel}_2 \\
+        \text{result} &\leftarrow \pi_{\text{Title, Name, Address}}(\text{rel}_3 * \text{BORROWER})
+    \end{align*}
+    
+    \item For each library branch, retrieve the branch name and the total number of books loaned out from that branch.
+    \begin{align*}
+        \text{rel}_1(\text{Branch\_no, Total}) &\leftarrow \left[\text{Branch\_no}, \text{Count}(\text{Book\_id})\right](\text{BOOK\_LOANS}) \\ 
+        \text{rel}_2 &\leftarrow \text{rel}_1 * \text{LIBRARY\_BRANCH} \\
+        \text{result} &\leftarrow \pi_{\text{Branch\_name, Total}}(\text{rel}_2)
+    \end{align*}
+    
+    \item Retrieve the names, addresses, and number of books checked out for all borrowers who have more than five books checked out.
+    \begin{align*}
+        \text{rel}_1(\text{Card\_no, Total}) &\leftarrow \left[\text{Card\_no}, \text{Count}(\text{Book\_id})\right](\text{BOOK\_LOANS}) \\
+        \text{rel}_2 &\leftarrow \sigma_{\text{Total} > 5}(\text{rel}_1) \\
+        \text{rel}_3 &\leftarrow \text{rel}_2 * \text{BORROWER} \\
+        \text{result} &\leftarrow \pi_{\text{Name, Address, Total}}(\text{rel}_3)
+    \end{align*}
+    
+    \item For each book authored (or coauthored) by \textit{Stephen King}, retrieve the title and the number of copies owned by the library branch whose name is `Central'.
+    \begin{align*}
+        \text{rel}_1 &\leftarrow \sigma_{\text{Branch\_name = Central}}(\text{LIBRARY\_BRANCH}) \\
+        \text{rel}_2 &\leftarrow \sigma_{\text{Author\_name = Stephen King}}(\text{BOOK\_AUTHORS}) \\
+        \text{rel}_3 &\leftarrow \text{rel}_2 * \text{BOOK} \\
+        \text{rel}_4 &\leftarrow \text{rel}_1 * \text{BOOK\_COPIES} \\
+        \text{result} &\leftarrow \pi_{\text{Title, No\_of\_copies}}(\text{rel}_3 * \text{rel}_4)
+    \end{align*}
+
+\end{parlist}
+
+\newpage
+\section*{8.22 Join Operations}
+
+\begin{parlist}
+    \item $T_1 \bowtie_{T_1.P = T_2.A} T_2$
+    
+    \begin{table}[h!]
+        \centering
+        \begin{tabularx}{0.5\textwidth}{|C|C|C|C|C|C|}
+            \hline \textbf{P} & \textbf{Q} & \textbf{R} & \textbf{A} & \textbf{B} & \textbf{C} \\ \hline
+            10 & a & 5 & 10 & b & 6 \\ \hline
+            10 & a & 5 & 10 & b & 5 \\ \hline
+            25 & a & 6 & 25 & c & 3 \\ \hline
+        \end{tabularx}
+    \end{table}
+    
+    \item $T_1 \bowtie_{T_1.Q = T_2.B} T_2$
+    
+    \begin{table}[h!]
+        \centering
+        \begin{tabularx}{0.5\textwidth}{|C|C|C|C|C|C|}
+            \hline \textbf{P} & \textbf{Q} & \textbf{R} & \textbf{A} & \textbf{B} & \textbf{C} \\ \hline
+            15 & b & 8 & 10 & b & 6 \\ \hline
+            15 & b & 8 & 10 & b & 5 \\ \hline
+        \end{tabularx}
+    \end{table}
+    
+    \item $T_1 \leftouterjoin_{T_1.P = T_2.A} T_2$
+    
+    \begin{table}[h!]
+        \centering
+        \begin{tabularx}{0.5\textwidth}{|C|C|C|C|C|C|}
+            \hline \textbf{P} & \textbf{Q} & \textbf{R} & \textbf{A} & \textbf{B} & \textbf{C} \\ \hline
+            10 & a & 5 & 10 & b & 6 \\ \hline
+            10 & a & 5 & 10 & b & 5 \\ \hline
+            15 & a & 8 & \textit{null} & \textit{null} & \textit{null} \\ \hline
+            25 & a & 8 & 25 & c & 3 \\ \hline
+        \end{tabularx}
+    \end{table}
+
+    \item $T_1 \rightouterjoin_{T_1.Q = T_2.B} T_2$
+    
+    \begin{table}[h!]
+        \centering
+        \begin{tabularx}{0.5\textwidth}{|C|C|C|C|C|C|}
+            \hline \textbf{P} & \textbf{Q} & \textbf{R} & \textbf{A} & \textbf{B} & \textbf{C} \\ \hline
+            15 & b & 8 & 10 & b & 6 \\ \hline
+            \textit{null} & \textit{null} & \textit{null} & 25 & c & 3 \\ \hline
+            15 & b & 8 & 10 & b & 5 \\ \hline
+        \end{tabularx}
+    \end{table}
+    
+    
+    \item $T_1 \cup T_2$
+    
+    \begin{table}[h!]
+        \centering
+        \begin{tabularx}{0.5\textwidth}{|C|C|C|}
+            \hline \textbf{P} & \textbf{Q} & \textbf{R} \\ \hline
+            10 & a & 5 \\ \hline
+            15 & b & 8 \\ \hline
+            25 & a & 6 \\ \hline
+            10 & b & 6 \\ \hline
+            25 & c & 3 \\ \hline
+            10 & b & 5 \\ \hline
+        \end{tabularx}
+    \end{table}
+    
+    \item $T_1 \bowtie_{T_1.P = T_2.A \textbf{ AND } T_1.R = T_2.C} T_2$
+    
+    \begin{table}[h!]
+        \centering
+        \begin{tabularx}{0.5\textwidth}{|C|C|C|C|C|C|}
+            \hline \textbf{P} & \textbf{Q} & \textbf{R} & \textbf{A} & \textbf{B} & \textbf{C} \\ \hline
+            10 & a & 5 & 10 & b & 5 \\ \hline
+        \end{tabularx}
+    \end{table}
+
+\end{parlist}
+
+\end{document}
