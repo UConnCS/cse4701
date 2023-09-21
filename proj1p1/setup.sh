@@ -21,5 +21,5 @@ fi
 docker run -d --name=cse4701-sql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=cse4701 -e MYSQL_USER=user -e MYSQL_PASSWORD=password -e MYSQL_DATABASE=cse4701 mariadb:10
 ADDR=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' cse4701-sql)
 echo "[-] Container created with virtual address $ADDR"
-sleep 3
+sleep 2
 mysql -h 127.0.0.1 -u root -p cse4701
