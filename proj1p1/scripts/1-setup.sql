@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS Book (
 CREATE TABLE IF NOT EXISTS Book_Authors (
     Book_id VARCHAR(2) NOT NULL,
     Author_name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (Book_id, Author_name),
     FOREIGN KEY (Book_id) REFERENCES Book(Book_id)
 );
 
