@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-CONTAINER_NAME="cse4701-proj1p1"
+CONTAINER_NAME="cse4701-proj1p2"
 DATABASE="Book_Loan_DB"
 DATABASE_PASSWORD="cse4701"
 
@@ -11,7 +11,7 @@ if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
 
     # Container already running
     if [ ! "$(docker ps -aq -f status=exited -f name=$CONTAINER_NAME)" ]; then
-        echo "[-] Connecting.."
+        echo "[-] Connecting to the containerized SQL instance.."
         mysql -h 127.0.0.1 -u root --password=$DATABASE_PASSWORD $DATABASE
         exit 1
     fi
@@ -19,7 +19,7 @@ if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
     # Container currently stopped
     docker start $CONTAINER_NAME
     echo "[-] Container currently offline, booting + connecting.."
-    mysql -h 127.0.0.1 -u root --password=$DATABASE_PASSWORD cse4701
+    mysql -h 127.0.0.1 -u root --password=$DATABASE_PASSWORD $DATABASE
     exit 1
 fi
 

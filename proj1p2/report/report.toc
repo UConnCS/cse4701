@@ -1,0 +1,21 @@
+\contentsline {section}{Part 1, Modifying the Publisher Table}{2}{}%
+\contentsline {subsection}{Last Assignment State}{2}{}%
+\contentsline {subsection}{Adding the New Column}{2}{}%
+\contentsline {section}{Part 2, Emptying the Tables}{3}{}%
+\contentsline {subsection}{Deleting the Records}{3}{}%
+\contentsline {subsection}{Verifying Deletion}{3}{}%
+\contentsline {section}{Part 3, Importing CSV-Formatted Data}{4}{}%
+\contentsline {subsection}{Importing the Data}{4}{}%
+\contentsline {subsection}{Resultant Tuple Counts}{4}{}%
+\contentsline {section}{Part 4, Complex Query Exercises}{5}{}%
+\contentsline {subsection}{a) Copies of a book at one branch}{5}{}%
+\contentsline {subsection}{b) Copies of a book at all branches}{5}{}%
+\contentsline {subsection}{c) Borrowers with no books checked out}{5}{}%
+\contentsline {subsection}{d) Information about all books loaned on 1/3/2023}{6}{}%
+\contentsline {subsection}{e) For each branch get the number of books loaned}{6}{}%
+\contentsline {subsection}{f) Retrieve info about borrowers with more than two books loaned}{7}{}%
+\contentsline {subsection}{g) Retrieve info about books (co)authored by Stephen King at the Central branch}{7}{}%
+\contentsline {subsection}{h) Find books that cannot be loaned on 2/2/2023}{8}{}%
+\contentsline {subsection}{i) Retrieve info about the borrower who loaned all the books by Henry Kissinger}{8}{}%
+\contentsline {section}{Part 5, Setting Up Constraints}{9}{}%
+\contentsline {subsection}{Due Date Validation}{9}{}%
