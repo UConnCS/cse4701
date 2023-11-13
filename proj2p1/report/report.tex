@@ -1,0 +1,213 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{\textbf{CSE4701}\\ Project 2, Part 1}
+\author{Mike Medved}
+\date{November 12th, 2023}
+
+\usepackage{graphicx}
+\usepackage{amsthm}
+\usepackage{amssymb} 
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{multirow, tabularx}
+\usepackage[margin=1in]{geometry} 
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{enumitem}
+\newlist{parlist}{enumerate}{1}
+\setlist[parlist]{label=(\alph*),wide=0pt,topsep=0pt}
+
+% changes title name for the table of contents
+\renewcommand*\contentsname{Table of Contents}
+
+% makes sections unnumbered and hides numbers from table of contents
+\setcounter{secnumdepth}{0}
+
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\NewExpandableDocumentCommand\mcc{O{1}m}{\multicolumn{#1}{c}{#2}}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{HTML}{C42043}
+\definecolor{backcolour}{HTML}{F2F2F2}
+\definecolor{bookColor}{cmyk}{0,0,0,0.90}  
+\color{bookColor}
+\input{js.tex}
+
+\newcommand\numberstyle[1]{%
+    \footnotesize
+    \color{codegray}%
+    \ttfamily
+    \ifnum#1<10 0\fi#1 |%
+}
+
+\def\ojoin{\setbox0=\hbox{$\bowtie$}%
+  \rule[-.02ex]{.25em}{.4pt}\llap{\rule[\ht0]{.25em}{.4pt}}}
+\def\leftouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie}}
+\def\rightouterjoin{\mathbin{\bowtie\mkern-5.8mu\ojoin}}
+\def\fullouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie\mkern-5.8mu\ojoin}}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+In the following assignment I am using Prisma running on TypeScript to interface with the MongoDB database. The database is hosted locally on a Docker container as a replica set in order to allow Prisma to work. Below is a snippet from the script used to populate the database in accordance with the instructions provided for the assignment.
+
+$\hfill \break$
+\lstinputlisting[language=JavaScript]{snippets/1-generate.ts}
+
+$\hfill \break$
+\textbf{Note:} All table-like result views in the rest of this assignment were achieved by using the built-in \textit{console.table} logging mechanism in JavaScript. They are not necessarily representative of how MongoDB stores the data or anything of the sort, merely for more readable output. Also, the \textit{(index)} column in said table views is a result of the \textit{console.table} function and is not actually an attribute that exists on the documents in the database.
+
+\newpage
+\section{Question 3, Creating the NoSQL Database}
+
+\subsection{Part C + D, Data Insertion Results}
+
+We will use the \textit{findMany} command without any filtering parameters to enumerate all entries in the database. Additionally, we will then use the \textit{count} command to get the number of records in the database. The below code was used to execute these queries against the database.
+$\hfill \break$
+
+\lstinputlisting[language=JavaScript]{snippets/2-table-view.ts}
+
+$\hfill \break$
+Below are the results of the above code being executed, note that the image binary data was truncated, and the description JSON data was stringified so it is readable. You may need to zoom in as the image is quite wide.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.3]{images/q3-cd-table-and-count.png}
+    \caption{Results for Part C and D}
+    \label{fig:q3_table_view}
+\end{figure}
+
+\section{Question 4, Querying the NoSQL Database}
+
+\subsection{Part A, Retrieving a Single Document By ID}
+
+\textit{Show the name and document describing the book with ID = B1.}
+
+$\hfill \break$
+In order to retrieve a single document by ID, we will use the \textit{findUnique} command with the ID as a parameter. The below code was used to execute this query against the database.
+$\hfill \break$
+
+\lstinputlisting[language=JavaScript]{snippets/3a-select-b1.ts}
+
+$\hfill \break$
+Below is the result of the above query. Note again that the binary image data has been truncated.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.375]{images/q4-a-show-b1.png}
+    \caption{Results for Part A}
+    \label{fig:q4_a}
+\end{figure}
+
+\newpage
+\subsection{Part B, Retrieving The Number of Filtered Documents}
+
+\textit{Show the total number of books which have an image saved.}
+
+$\hfill \break$
+In order to retrieve the number of filtered documents, we will use the \textit{count} command with a filter parameter. The below code was used to execute this query against the database.
+$\hfill \break$
+
+\lstinputlisting[language=JavaScript]{snippets/3b-total-books-w-image.ts}
+
+$\hfill \break$
+Below is the output of the above code:
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.5]{images/q4-b-books-w-images.png}
+    \caption{Results for Part B}
+    \label{fig:q4_b}
+\end{figure}
+
+\subsection{Part C, Retrieving a Document Without a Field}
+
+\textit{Show the name of the book which does not have a cover image saved.}
+
+$\hfill \break$
+In order to write this query, we will use the \textit{findFirst} command with a filter parameter checking for a document wherein the \textit{image} field is equal to undefined. Additionally, we will set the \textit{select} field to only output the name. The below code was used to execute this query against the database.
+$\hfill \break$
+
+\lstinputlisting[language=JavaScript]{snippets/3c-book-w-no-image.ts}
+
+$\hfill \break$
+Below is the output of the above code:
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.5]{images/q4-c-book-name-no-image.png}
+    \caption{Results for Part C}
+    \label{fig:q4_c}
+\end{figure}
+
+\newpage
+\subsection{Part D, Printing All Values of a Field in the Database}
+
+\textit{Print out all the book names in LIBRARY\_NoSQL}
+
+$\hfill \break$
+In order to write this query, we will use the \textit{findMany} command with a select parameter to only output the name field. The below code was used to execute this query against the database.
+$\hfill \break$
+
+\lstinputlisting[language=JavaScript]{snippets/3d-book-names.ts}
+
+$\hfill \break$
+Below is the output of the above code (note that the index column is a byproduct of the \textit{console.table} command, and does not actually exist in the database):
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.5]{images/q4-d-book-names.png}
+    \caption{Results for Part D}
+    \label{fig:q4_d}
+\end{figure}
+
+\subsection{Part E, Retrieving Documents With a Field}
+\textit{Print out the name and ID of the books available in kindle, and the price of the kindle version
+for each.}
+
+$\hfill \break$
+In order to be able to execute this query with Prisma, I opted to use the \textit{findRaw} command as the nested JSON path filtering was not working for me. Thus, I used the below code snippet to query the database. Below, you can see I abstracted out the creation of the \textit{\$and} block as I reused it for both of the possible Kindle paths (in the root, and under format). Additionally, I used the projection block to filter only the attributes I wanted to return as per the problem. In this case, I also included both the root and format paths for the Kindle attribute. 
+$\hfill \break$
+
+\lstinputlisting[language=JavaScript]{snippets/3e-all-available-kindle.ts}
+
+$\hfill \break$
+Below is the output of the above code:
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.5]{images/q4-e-book-on-kindle.png}
+    \caption{Results for Part E}
+    \label{fig:q4_e}
+\end{figure}
+
+\subsection{Part F, Retrieving Documents With An Ambiguous Field Value}
+
+\textit{Show the ID of both books named “The Lost Tribe”}
+
+$\hfill \break$
+In order to write this query, we will use the \textit{findMany} command to retrieve all documents with the name field equalling "The Lost Tribe". Additionally, I will only select the \textit{book\_id} field as per the problem. The below code was used to execute this query against the database.
+$\hfill \break$
+
+\lstinputlisting[language=JavaScript]{snippets/3f-select-lost-tribe.ts}
+
+$\hfill \break$
+Below is the output of the above code:
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.5]{images/q4-f-select-lost-tribe.png}
+    \caption{Results for Part F}
+    \label{fig:q4_f}
+\end{figure}
+
+\end{document}
