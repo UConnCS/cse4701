@@ -1,0 +1,12 @@
+{
+    "id": "B1",
+    "bookname": "The Lost Tribe",
+    "author": "Mark Lee",
+    "printlength": "249",
+
+    "format": {
+        "paperback": "$74.98",
+        "hardcover": "$4.05",
+        "kindle": "$4.99"
+    }
+}

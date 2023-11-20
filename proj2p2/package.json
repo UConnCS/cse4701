@@ -1,0 +1,29 @@
+{
+    "dependencies": {
+        "@prisma/client": "^5.5.2",
+        "dotenv": "^16.3.1",
+        "mariadb": "^3.2.2"
+    },
+    "devDependencies": {
+        "@types/node": "^20.9.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.2.2"
+    },
+    "name": "project2part1",
+    "version": "1.0.0",
+    "description": "CSE4701 Project 2 Part 1",
+    "main": "app.ts",
+    "scripts": {
+        "start": "./setup.sh && ts-node app"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/notm1ke/cse4701.git"
+    },
+    "author": "Mike Medved",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/notm1ke/cse4701/issues"
+    },
+    "homepage": "https://github.com/notm1ke/cse4701#readme"
+}

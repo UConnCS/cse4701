@@ -1,0 +1,13 @@
+{
+    "id": "B4",
+    "bookname": "The Age of AI",
+    "author": ["Henry Kissinger", "Eric Schmidt", "Daniel Huttenlocher"],
+    "publicationyear": "2021",
+
+    "format": {
+        "kindle": "$4.99",
+        "audiobook": "$0.00",
+        "hardcover": "$16.59",
+        "paperback": "$15.19"
+    }
+}

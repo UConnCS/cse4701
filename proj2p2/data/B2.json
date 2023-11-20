@@ -1,0 +1,14 @@
+{
+    "id": "B2",
+    "bookname": "It",
+    "author": "Stephen King",
+    "printlength": "1168",
+    "language": "English",
+
+    "format": {
+        "audiobook": "$0.00",
+        "kindle": "12.99",
+        "paperback": "14.49",
+        "hardcover": "21.49"
+    }
+}

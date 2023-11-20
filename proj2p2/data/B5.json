@@ -1,0 +1,12 @@
+{
+    "id": "B5",
+    "bookname": "A World Restored",
+    "author": "Henry Kissinger",
+    "language": "English",
+
+    "format": {
+        "kindle": "$2.99",
+        "paperback": "$39.76",
+        "hardcover": "$29.95"
+    }
+}
